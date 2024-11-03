@@ -50,7 +50,9 @@ VALUES
   (2, 'B02', 'Infecção Viral'),
   (3, 'C03', 'Doença Respiratória Crônica'),
   (4, 'D04', 'Diabetes Tipo 2'),
-  (5, 'E05', 'Hipertensão Arterial');
+  (5, 'E05', 'Hipertensão Arterial'),
+  (6, 'F33', 'Transtorno Depressivo Recorrente'), 
+  (7,'J45', 'Asma');
   
 
 INSERT INTO ConsultaMedica (nroConsulta, nroPaciente, idMedico, idCodDiagnostico, dataConsulta)
@@ -92,8 +94,7 @@ VALUES
     (5, 3, 5, '2024-10-22', 5, 5),
     (6, 4, 4, '2024-11-02', 6, 6),
     (7, 5, 5, '2024-11-03', 7, 7),
-    (8, 1, 6, '2024-11-04', 1, 2),
-    (9, 2, 7, '2024-11-05', 3, 3);
+
 
 INSERT INTO EmailMedico(idMedico, enderecoEmail) 
 VALUES
