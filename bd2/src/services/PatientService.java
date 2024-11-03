@@ -5,12 +5,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import database.DatabaseConnection;
 import models.MedicalConsultation;
 import models.MedicalExam;
 import models.Patient;
+import database.DatabaseConnection;
 
 public class PatientService {
 
@@ -119,7 +120,14 @@ public class PatientService {
 
     public List<MedicalConsultation> getConsultationsByPatient(int nroPaciente) {
         List<MedicalConsultation> consultations = new ArrayList<>();
-        String sql = "SELECT * FROM ConsultaMedica WHERE nroPaciente = ?";
+        String sql = "SELECT c.nroConsulta, c.dataConsulta, " +
+                     "m.nome AS nomeMedico, m.crm, em.enderecoEmail, " +
+                     "d.codigoCID, d.descricaoDiagnostico " +
+                     "FROM ConsultaMedica c " +
+                     "JOIN Medico m ON c.idMedico = m.idMedico " +
+                     "LEFT JOIN EmailMedico em ON m.idMedico = em.idMedico " +
+                     "JOIN CodigoDiagnostico d ON c.idCodDiagnostico = d.idCodDiagnostico " +
+                     "WHERE c.nroPaciente = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, nroPaciente);
@@ -127,10 +135,12 @@ public class PatientService {
             while (rs.next()) {
                 MedicalConsultation consultation = new MedicalConsultation();
                 consultation.setNroConsulta(rs.getInt("nroConsulta"));
-                consultation.setNroPaciente(rs.getInt("nroPaciente"));
-                consultation.setIdMedico(rs.getInt("idMedico"));
-                consultation.setIdCodDiagnostico(rs.getInt("idCodDiagnostico"));
                 consultation.setDataConsulta(rs.getDate("dataConsulta"));
+                consultation.setNomeMedico(rs.getString("nomeMedico"));
+                consultation.setCrmMedico(rs.getString("crm"));
+                consultation.setEmailMedico(rs.getString("enderecoEmail"));
+                consultation.setCodigoCID(rs.getString("codigoCID"));
+                consultation.setDescricaoDiagnostico(rs.getString("descricaoDiagnostico"));
                 consultations.add(consultation);
             }
         } catch (SQLException e) {
@@ -142,7 +152,13 @@ public class PatientService {
 
     public List<MedicalExam> getExamsByPatient(int nroPaciente) {
         List<MedicalExam> exams = new ArrayList<>();
-        String sql = "SELECT * FROM ExameMedico WHERE nroPaciente = ?";
+        String sql = "SELECT e.nroExame, e.dtExame, " +
+                     "t.tipoExame AS codigoTipoExame, t.nomeExame, " +
+                     "r.resultadoExame, r.obsExame " +
+                     "FROM ExameMedico e " +
+                     "JOIN TipoExame t ON e.tipoExame = t.tipoExame " +
+                     "JOIN ResultadoExame r ON e.idResultadoGeral = r.idResultadoGeral " +
+                     "WHERE e.nroPaciente = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, nroPaciente);
@@ -150,11 +166,11 @@ public class PatientService {
             while (rs.next()) {
                 MedicalExam exam = new MedicalExam();
                 exam.setNroExame(rs.getInt("nroExame"));
-                exam.setIdMedico(rs.getInt("idMedico"));
-                exam.setNroPaciente(rs.getInt("nroPaciente"));
                 exam.setDtExame(rs.getDate("dtExame"));
-                exam.setTipoExame(rs.getInt("tipoExame"));
-                exam.setIdResultadoGeral(rs.getInt("idResultadoGeral"));
+                exam.setTipoExame(rs.getInt("codigoTipoExame"));
+                exam.setNomeExame(rs.getString("nomeExame"));
+                exam.setResultadoExame(rs.getString("resultadoExame"));
+                exam.setObsExame(rs.getString("obsExame"));
                 exams.add(exam);
             }
         } catch (SQLException e) {

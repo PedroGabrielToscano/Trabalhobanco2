@@ -10,7 +10,7 @@ public class MedicalExam {
     private int tipoExame;
     private int idResultadoGeral;
 
-    // Novos atributos para listagem geral
+    // Novos atributos para detalhes completos
     private String nomeExame;
     private String resultadoExame;
     private String obsExame;

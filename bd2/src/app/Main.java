@@ -15,13 +15,18 @@ public class Main {
         PatientService patientService = new PatientService();
 
         int option = 0;
-        while (option != 5) {
+        while (option != 6) {
             System.out.println("Menu:");
-            System.out.println("1 - Pesquisar cliente");
+            System.out.println("1 - Pesquisar paciente");
             System.out.println("2 - Listar todos os pacientes");
-            System.out.println("3 - Listar consultas médicas realizadas");
-            System.out.println("4 - Listar exames realizados");
-            System.out.println("5 - Sair");
+            System.out.println("3 - Listar todas consultas médicas realizadas");
+            System.out.println("4 - Listar todos exames realizados");
+            System.out.println("5 - Imprimir prontuário completo do paciente");
+            System.out.println("6 - ");
+            System.out.println("7 - ");
+            System.out.println("8 - ");
+            System.out.println("9 - ");
+            System.out.println("0 - Sair");
             System.out.print("Selecione uma opção: ");
 
             option = scanner.nextInt();
@@ -41,8 +46,15 @@ public class Main {
                     listAllExams(patientService);
                     break;
                 case 5:
+                    printPatientRecord(scanner, patientService);
+                    break;
+                case 0:
                     System.out.println("Saindo...");
                     break;
+                case 6:
+                case 7:
+                case 8:
+                case 9:
                 default:
                     System.out.println("Opção inválida. Tente novamente.");
             }
@@ -149,6 +161,64 @@ public class Main {
                 System.out.println("Observações do Exame: " + exam.getObsExame());
                 System.out.println("-----------------------------------");
             }
+        }
+    }
+
+    private static void printPatientRecord(Scanner scanner, PatientService patientService) {
+        System.out.print("Digite o documento do paciente: ");
+        String docIdentidade = scanner.nextLine();
+
+        Patient patient = patientService.getPatientByDocument(docIdentidade);
+
+        if (patient != null) {
+            System.out.println("Prontuário Completo do Paciente:");
+            System.out.println("==================================");
+            System.out.println("Número do paciente: " + patient.getNroPaciente());
+            System.out.println("Nome: " + patient.getNome());
+            System.out.println("Data de nascimento: " + patient.getDtNascimento());
+            System.out.println("Estado civil: " + patient.getEstCivil());
+            System.out.println("Sexo: " + patient.getSexo());
+            System.out.println("Documento de identidade: " + patient.getDocIdentidade());
+            System.out.println("----------------------------------");
+
+            // Listar todas as consultas
+            List<MedicalConsultation> consultations = patientService.getConsultationsByPatient(patient.getNroPaciente());
+            System.out.println("Consultas Médicas:");
+            if (consultations.isEmpty()) {
+                System.out.println("Nenhuma consulta médica encontrada para este paciente.");
+            } else {
+                for (MedicalConsultation consultation : consultations) {
+                    System.out.println("Número da Consulta: " + consultation.getNroConsulta());
+                    System.out.println("Data da Consulta: " + consultation.getDataConsulta());
+                    System.out.println("Nome do Médico: " + consultation.getNomeMedico());
+                    System.out.println("CRM do Médico: " + consultation.getCrmMedico());
+                    System.out.println("Email do Médico: " + consultation.getEmailMedico());
+                    System.out.println("Código CID: " + consultation.getCodigoCID());
+                    System.out.println("Descrição do Diagnóstico: " + consultation.getDescricaoDiagnostico());
+                    System.out.println("----------------------------------");
+                }
+            }
+
+            // Listar todos os exames
+            List<MedicalExam> exams = patientService.getExamsByPatient(patient.getNroPaciente());
+            System.out.println("Exames Médicos:");
+            if (exams.isEmpty()) {
+                System.out.println("Nenhum exame médico encontrado para este paciente.");
+            } else {
+                for (MedicalExam exam : exams) {
+                    System.out.println("Número do Exame: " + exam.getNroExame());
+                    System.out.println("Data do Exame: " + exam.getDtExame());
+                    System.out.println("Código do Tipo de Exame: " + exam.getTipoExame());
+                    System.out.println("Nome do Exame: " + exam.getNomeExame());
+                    System.out.println("Resultado do Exame: " + exam.getResultadoExame());
+                    System.out.println("Observações do Exame: " + exam.getObsExame());
+                    System.out.println("----------------------------------");
+                }
+            }
+
+            System.out.println("==================================");
+        } else {
+            System.out.println("Paciente não encontrado com o documento fornecido.");
         }
     }
 

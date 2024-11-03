@@ -9,7 +9,7 @@ public class MedicalConsultation {
     private int idCodDiagnostico;
     private Date dataConsulta;
 
-    // Novos atributos para listagem geral
+    // Novos atributos para detalhes completos
     private String nomeMedico;
     private String crmMedico;
     private String emailMedico;
