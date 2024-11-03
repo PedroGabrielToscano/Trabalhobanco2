@@ -17,20 +17,19 @@ public class Main {
         int option = 0;
         while (option != 6) {
             System.out.println("Menu:");
-            System.out.println("1 - Pesquisar paciente");
+            System.out.println("1 - Pesquisar cliente");
             System.out.println("2 - Listar todos os pacientes");
-            System.out.println("3 - Listar todas consultas médicas realizadas");
-            System.out.println("4 - Listar todos exames realizados");
+            System.out.println("3 - Listar consultas médicas realizadas");
+            System.out.println("4 - Listar exames realizados");
             System.out.println("5 - Imprimir prontuário completo do paciente");
-            System.out.println("6 - ");
-            System.out.println("7 - ");
-            System.out.println("8 - ");
-            System.out.println("9 - ");
-            System.out.println("0 - Sair");
+            System.out.println("6 - Sair");
             System.out.print("Selecione uma opção: ");
 
-            option = scanner.nextInt();
-            scanner.nextLine(); // Consome a nova linha
+            try {
+                option = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                option = -1; // Opção inválida
+            }
 
             switch (option) {
                 case 1:
@@ -48,13 +47,9 @@ public class Main {
                 case 5:
                     printPatientRecord(scanner, patientService);
                     break;
-                case 0:
+                case 6:
                     System.out.println("Saindo...");
                     break;
-                case 6:
-                case 7:
-                case 8:
-                case 9:
                 default:
                     System.out.println("Opção inválida. Tente novamente.");
             }
@@ -77,6 +72,11 @@ public class Main {
             System.out.println("Estado civil: " + patient.getEstCivil());
             System.out.println("Sexo: " + patient.getSexo());
             System.out.println("Documento de identidade: " + patient.getDocIdentidade());
+            if (patient.getEndereco() != null) {
+                System.out.println("Endereço: " + patient.getEndereco().toString());
+            } else {
+                System.out.println("Endereço: Não disponível");
+            }
 
             // Exibe o segundo menu
             int subOption = 0;
@@ -86,8 +86,12 @@ public class Main {
                 System.out.println("2 - Listar exames médicos do paciente");
                 System.out.println("3 - Voltar ao menu principal");
                 System.out.print("Selecione uma opção: ");
-                subOption = scanner.nextInt();
-                scanner.nextLine(); // Consome a nova linha
+                
+                try {
+                    subOption = Integer.parseInt(scanner.nextLine());
+                } catch (NumberFormatException e) {
+                    subOption = -1; // Opção inválida
+                }
 
                 switch (subOption) {
                     case 1:
@@ -179,6 +183,11 @@ public class Main {
             System.out.println("Estado civil: " + patient.getEstCivil());
             System.out.println("Sexo: " + patient.getSexo());
             System.out.println("Documento de identidade: " + patient.getDocIdentidade());
+            if (patient.getEndereco() != null) {
+                System.out.println("Endereço: " + patient.getEndereco().toString());
+            } else {
+                System.out.println("Endereço: Não disponível");
+            }
             System.out.println("----------------------------------");
 
             // Listar todas as consultas
@@ -232,8 +241,11 @@ public class Main {
             for (MedicalConsultation consultation : consultations) {
                 System.out.println("Número da consulta: " + consultation.getNroConsulta());
                 System.out.println("Data da consulta: " + consultation.getDataConsulta());
-                System.out.println("ID do médico: " + consultation.getIdMedico());
-                System.out.println("ID do diagnóstico: " + consultation.getIdCodDiagnostico());
+                System.out.println("Nome do Médico: " + consultation.getNomeMedico());
+                System.out.println("CRM do Médico: " + consultation.getCrmMedico());
+                System.out.println("Email do Médico: " + consultation.getEmailMedico());
+                System.out.println("Código CID: " + consultation.getCodigoCID());
+                System.out.println("Descrição do Diagnóstico: " + consultation.getDescricaoDiagnostico());
                 System.out.println("-----------------------------------");
             }
         }
@@ -249,9 +261,10 @@ public class Main {
             for (MedicalExam exam : exams) {
                 System.out.println("Número do exame: " + exam.getNroExame());
                 System.out.println("Data do exame: " + exam.getDtExame());
-                System.out.println("ID do médico: " + exam.getIdMedico());
-                System.out.println("Tipo de exame: " + exam.getTipoExame());
-                System.out.println("ID do resultado: " + exam.getIdResultadoGeral());
+                System.out.println("Código do Tipo de Exame: " + exam.getTipoExame());
+                System.out.println("Nome do Exame: " + exam.getNomeExame());
+                System.out.println("Resultado do Exame: " + exam.getResultadoExame());
+                System.out.println("Observações do Exame: " + exam.getObsExame());
                 System.out.println("-----------------------------------");
             }
         }

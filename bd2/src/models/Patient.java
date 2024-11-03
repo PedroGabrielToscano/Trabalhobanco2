@@ -10,6 +10,7 @@ public class Patient {
     private int idEndereco;
     private String sexo;
     private String docIdentidade;
+    private Address endereco; // Novo atributo
 
     // Getters e Setters
     public int getNroPaciente() {
@@ -66,5 +67,13 @@ public class Patient {
 
     public void setDocIdentidade(String docIdentidade) {
         this.docIdentidade = docIdentidade;
+    }
+
+    public Address getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(Address endereco) {
+        this.endereco = endereco;
     }
 }

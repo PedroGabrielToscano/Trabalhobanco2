@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import models.Address;
 import models.MedicalConsultation;
 import models.MedicalExam;
 import models.Patient;
@@ -31,12 +32,52 @@ public class PatientService {
                 patient.setIdEndereco(rs.getInt("idEndereco"));
                 patient.setSexo(rs.getString("sexo"));
                 patient.setDocIdentidade(rs.getString("docIdentidade"));
+
+                // Recupera o endereço do paciente
+                Address address = getAddressById(rs.getInt("idEndereco"));
+                patient.setEndereco(address);
             }
         } catch (SQLException e) {
             System.err.println("Erro ao buscar paciente: " + e.getMessage());
             e.printStackTrace();
         }
         return patient;
+    }
+
+    private Address getAddressById(int idEndereco) {
+        Address address = null;
+        String sql = "SELECT e.idEndereco, e.idLogradouro, e.idCidade, e.idBairro, " +
+                     "tl.nomeTipoLogradouro, l.nomeLogradouro, " +
+                     "c.nomeCidade, uf.siglaUF, uf.nomeUF, b.nomeBairro " +
+                     "FROM Endereco e " +
+                     "JOIN Logradouro l ON e.idLogradouro = l.idLogradouro " +
+                     "JOIN TipoLogradouro tl ON l.idTipoLogradouro = tl.idTipoLogradouro " +
+                     "JOIN Cidade c ON e.idCidade = c.idCidade " +
+                     "JOIN UnidadeFederativa uf ON c.idUnidadeFederativa = uf.idUnidadeFederativa " +
+                     "JOIN Bairro b ON e.idBairro = b.idBairro " +
+                     "WHERE e.idEndereco = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idEndereco);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                address = new Address();
+                address.setIdEndereco(rs.getInt("idEndereco"));
+                address.setIdLogradouro(rs.getInt("idLogradouro"));
+                address.setIdCidade(rs.getInt("idCidade"));
+                address.setIdBairro(rs.getInt("idBairro"));
+                address.setTipoLogradouro(rs.getString("nomeTipoLogradouro"));
+                address.setNomeLogradouro(rs.getString("nomeLogradouro"));
+                address.setNomeCidade(rs.getString("nomeCidade"));
+                address.setSiglaUF(rs.getString("siglaUF"));
+                address.setNomeUF(rs.getString("nomeUF"));
+                address.setNomeBairro(rs.getString("nomeBairro"));
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar endereço: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return address;
     }
 
     public List<Patient> getAllPatients() {
