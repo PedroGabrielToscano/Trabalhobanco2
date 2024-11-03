@@ -34,6 +34,43 @@ JOIN
 JOIN 
     ResultadoExame r ON e.idResultadoGeral = r.idResultadoGeral;
 
+--Produto Cartesiano
+SELECT Medico.idMedico, Medico.nome, TipoExame.tipoExame, TipoExame.nomeExame
+FROM Medico
+CROSS JOIN TipoExame;
+
+--UNION 
+SELECT 
+    'Paciente' AS Tipo,
+    nome,
+    dtNascimento,
+    estCivil
+FROM 
+    Paciente
+WHERE 
+    estCivil = 'CASADO'
+UNION ALL
+SELECT 
+    'Medico' AS Tipo,
+    nome,
+    dtNascimento,
+    estCivil
+FROM 
+    Medico
+WHERE 
+    estCivil = 'CASADO';
+
+--DIFERENÇA (Quem fez consulta mas nao exame)
+DELETE FROM ExameMedico WHERE nroExame IN (8, 9); --Remove Registros de Exames;
+SELECT
+    p.nropaciente,
+    p.nome
+FROM 
+    Paciente p
+WHERE 
+    p.nroPaciente IN (SELECT c.nroPaciente FROM ConsultaMedica c)
+    AND p.nroPaciente NOT IN (SELECT e.nroPaciente FROM ExameMedico e);
+
 --EXTRAS
 --Listar todas as consultas médicas realizadas, com os nomes dos pacientes, médicos e descrições dos diagnósticos  
 SELECT 
@@ -84,3 +121,7 @@ LEFT JOIN
     ConsultaMedica cm ON m.idMedico = cm.idMedico
 GROUP BY 
     m.nome;
+
+
+SELECT * FROM Paciente;
+SELECT * FROM CodigoDiagnostico;
