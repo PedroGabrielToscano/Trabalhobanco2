@@ -2,7 +2,6 @@ package app;
 
 import java.util.List;
 import java.util.Scanner;
-
 import models.MedicalConsultation;
 import models.MedicalExam;
 import models.Patient;
@@ -15,14 +14,17 @@ public class Main {
         PatientService patientService = new PatientService();
 
         int option = 0;
-        while (option != 6) {
+        while (option != 9) {
             System.out.println("Menu:");
             System.out.println("1 - Pesquisar cliente");
             System.out.println("2 - Listar todos os pacientes");
             System.out.println("3 - Listar consultas médicas realizadas");
             System.out.println("4 - Listar exames realizados");
             System.out.println("5 - Imprimir prontuário completo do paciente");
-            System.out.println("6 - Sair");
+            System.out.println("6 - Produto Cartesiano (Medico e TipoExame)");
+            System.out.println("7 - União de Médicos e Pacientes Casados");
+            System.out.println("8 - Diferença (Pacientes com consulta mas sem exame)");
+            System.out.println("0 - Sair");
             System.out.print("Selecione uma opção: ");
 
             try {
@@ -48,6 +50,15 @@ public class Main {
                     printPatientRecord(scanner, patientService);
                     break;
                 case 6:
+                    performCartesianProduct(patientService);
+                    break;
+                case 7:
+                    unionCasado(patientService);
+                    break;
+                case 8:
+                    listPatientsWithConsultationNoExam(patientService);
+                    break;
+                case 0:
                     System.out.println("Saindo...");
                     break;
                 default:
@@ -55,6 +66,30 @@ public class Main {
             }
         }
         scanner.close();
+    }
+
+    private static void performCartesianProduct(PatientService patientService) {
+        List<String> results = patientService.getCartesianProduct();
+        System.out.println("Produto Cartesiano (Medico e TipoExame):");
+        for (String result : results) {
+            System.out.println(result);
+        }
+    }
+
+    private static void unionCasado(PatientService patientService) {
+        List<String> results = patientService.getUnionCasado();
+        System.out.println("União de Médicos e Pacientes Casados:");
+        for (String result : results) {
+            System.out.println(result);
+        }
+    }
+
+    private static void listPatientsWithConsultationNoExam(PatientService patientService) {
+        List<Patient> patients = patientService.getPatientsWithConsultationNoExam();
+        System.out.println("Pacientes que fizeram consulta mas não fizeram exame:");
+        for (Patient patient : patients) {
+            System.out.println("Nome: " + patient.getNome() + " | Documento: " + patient.getDocIdentidade());
+        }
     }
 
     private static void searchClient(Scanner scanner, PatientService patientService) {

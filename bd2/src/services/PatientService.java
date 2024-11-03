@@ -43,6 +43,75 @@ public class PatientService {
         }
         return patient;
     }
+    
+    
+    public List<String> getCartesianProduct() {
+        List<String> results = new ArrayList<>();
+        String sql = "SELECT Medico.idMedico, Medico.nome AS nomeMedico, TipoExame.tipoExame, TipoExame.nomeExame " +
+                     "FROM Medico " +
+                     "CROSS JOIN TipoExame";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                results.add("ID Medico: " + rs.getInt("idMedico") + 
+                            ", Nome Medico: " + rs.getString("nomeMedico") + 
+                            ", Tipo Exame: " + rs.getInt("tipoExame") + 
+                            ", Nome Exame: " + rs.getString("nomeExame"));
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao realizar o produto cartesiano: " + e.getMessage());
+        }
+        return results;
+    }
+
+    // União de Médicos e Pacientes Casados
+    public List<String> getUnionCasado() {
+        List<String> results = new ArrayList<>();
+        String sql = "SELECT 'Paciente' AS Tipo, nome, dtNascimento, estCivil " +
+                     "FROM Paciente " +
+                     "WHERE estCivil = 'CASADO' " +
+                     "UNION ALL " +
+                     "SELECT 'Medico' AS Tipo, nome, dtNascimento, estCivil " +
+                     "FROM Medico " +
+                     "WHERE estCivil = 'CASADO'";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                results.add("Tipo: " + rs.getString("Tipo") + 
+                            ", Nome: " + rs.getString("nome") + 
+                            ", Data Nascimento: " + rs.getDate("dtNascimento") + 
+                            ", Estado Civil: " + rs.getString("estCivil"));
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao realizar a união: " + e.getMessage());
+        }
+        return results;
+    }
+
+    // Diferença (Pacientes com consulta mas sem exame)
+    public List<Patient> getPatientsWithConsultationNoExam() {
+        List<Patient> patients = new ArrayList<>();
+        String sql = "SELECT p.nroPaciente, p.nome, p.docIdentidade " +
+                     "FROM Paciente p " +
+                     "WHERE p.nroPaciente IN (SELECT c.nroPaciente FROM ConsultaMedica c) " +
+                     "AND p.nroPaciente NOT IN (SELECT e.nroPaciente FROM ExameMedico e)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                Patient patient = new Patient();
+                patient.setNroPaciente(rs.getInt("nroPaciente"));
+                patient.setNome(rs.getString("nome"));
+                patient.setDocIdentidade(rs.getString("docIdentidade"));
+                patients.add(patient);
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar pacientes com consulta mas sem exame: " + e.getMessage());
+        }
+        return patients;
+    }
 
     private Address getAddressById(int idEndereco) {
         Address address = null;
